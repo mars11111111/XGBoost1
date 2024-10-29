@@ -8,7 +8,10 @@ import matplotlib.font_manager as fm
 import xgboost as xgb
 
 # 加载模型
-model = joblib.load('best_model.pkl')
+try:
+    model = joblib.load('best_model.pkl')
+except Exception as e:
+    st.write(f"Error loading model: {e}")
 
 # 获取模型输入特征数量及顺序
 model_input_features = [ 'A2', 'A3', 'A5', 'B3', 'B4', 'B5', 'smokeG', 'exerciseG3', '年龄', '工龄', '工时分组', '生活满意度', '抑郁症状级别', '睡眠状况', '疲劳蓄积程度']
@@ -17,9 +20,9 @@ expected_feature_count = len(model_input_features)
 # 定义新的特征选项及名称
 cp_options = {
     0: '无症状 (0)',
-    1: '轻度职业紧张 (2)',
-    2: '中度职业紧张 (3)',
-    3: '重度职业紧张 (4)'
+    1: '轻度职业紧张 (1)',
+    2: '中度职业紧张 (2)',
+    3: '重度职业紧张 (3)'
 }
 
 # Streamlit 界面设置
@@ -116,23 +119,23 @@ def predict():
     进行职业紧张预测并生成建议和可视化。
     """
     try:
-        # 获取用户输入
+        # 获取用户输入，并进行数据类型检查和转换
         user_inputs = {
-            '年龄': age,
-            'A2': A2,
-            'A3': A3,
-            'A5': A5,
-            'B3': overtime_hours,
-            'B4': B4,
-            'B5': B5,
-            'smokeG': smoke,
+            '年龄': int(age),
+            'A2': int(A2),
+            'A3': int(A3),
+            'A5': int(A5),
+            'B3': int(overtime_hours),
+            'B4': int(B4),
+            'B5': int(B5),
+            'smokeG': int(smoke),
             'exerciseG3': exercise_options[exercise],
-            '工龄': service_years,
-            '工时分组': working_hours_group,
-            '生活满意度': life_satisfaction,
-            '抑郁症状级别': depression_level,
-            '睡眠状况': sleep_status,
-            '疲劳蓄积程度': work_load
+            '工龄': int(service_years),
+            '工时分组': int(working_hours_group),
+            '生活满意度': int(life_satisfaction),
+            '抑郁症状级别': int(depression_level),
+            '睡眠状况': int(sleep_status),
+            '疲劳蓄积程度': int(work_load)
         }
 
         # 按照固定顺序整理特征值
